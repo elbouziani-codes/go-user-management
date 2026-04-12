@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management System</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===============================
+       CSS VARIABLES (THEME)
+    =============================== */
+    :root {
+      --bg-color: #f5f7fb;
+      --card-bg: #ffffff;
+      --primary-color: #6366f1; /* Indigo */
+      --primary-dark: #4f46e5;
+      --text-color: #1f2937;
+      --muted-text: #6b7280;
+      --border-color: #e5e7eb;
+
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+
+      --radius: 12px;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      --transition: 0.3s ease;
+    }
+
+    /* ===============================
+       GLOBAL STYLES
+    =============================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    h1, h2, h3 {
+      font-weight: 600;
+    }
+
+    /* ===============================
+       HEADER
+    =============================== */
+    header {
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+      padding: 1rem 2rem;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-title {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      font-weight: 500;
+      color: var(--muted-text);
+      transition: var(--transition);
+    }
+
+    nav a:hover {
+      color: var(--primary-color);
+    }
+
+    /* ===============================
+       MAIN LAYOUT
+    =============================== */
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    /* ===============================
+       CARDS
+    =============================== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    /* ===============================
+       TABLE
+    =============================== */
+    .table-container {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background-color: #f9fafb;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    th {
+      color: var(--muted-text);
+      font-weight: 600;
+    }
+
+    tbody tr:hover {
+      background-color: #f9fafb;
+    }
+
+    /* Status badges */
+    .status {
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .active {
+      background-color: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .inactive {
+      background-color: var(--danger-bg);
+      color: var(--danger-text);
+    }
+
+    /* Action buttons */
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .btn-edit {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-delete {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #dc2626;
+    }
+
+    /* ===============================
+       FORM
+    =============================== */
+    .form-container {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: var(--muted-text);
+    }
+
+    input, select {
+      padding: 0.7rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+    }
+
+    .btn-submit {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-submit:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    /* ===============================
+       FOOTER
+    =============================== */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted-text);
+      font-size: 0.85rem;
+    }
+
+    /* ===============================
+       RESPONSIVE
+    =============================== */
+    @media (max-width: 768px) {
+      nav ul {
+        gap: 1rem;
+      }
+
+      .app-title {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-container">
+      <h1 class="app-title">User Management System</h1>
+      <nav>
+        <ul>
+          <li><a href="#">Users</a></li>
+          <li><a href="#">Roles</a></li>
+          <li><a href="#">Add User</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- CARDS -->
+    <section class="cards">
+      <div class="card">
+        <h3>Total Users</h3>
+        <p>{{.LenUser}}</p>
+      </div>
+      <div class="card">
+        <h3>Active Users</h3>
+        <p>{{.LenActiveUser}}</p>
+      </div>
+      <div class="card">
+        <h3>Inactive Users</h3>
+        <p>{{.LenNotActiveUser}}</p>
+      </div>
+    </section>
+
+    <!-- USERS TABLE -->
+    <section class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range .Users}}
+          <tr>
+            <td>{{.Id}}</td>
+            <td>{{.Name}}</td>
+            <td>{{.Email}}</td>
+            <td>{{.Role}}</td>
+            {{if .Status}}
+              <td><span class="status active">Active</span></td>
+            {{else}}
+               <td><span class="status inactive">Inactive</span></td>
+              {{end}}
+            <td class="actions">
+              <button class="btn btn-edit">Edit</button>
+              <button class="btn btn-delete">Delete</button>
+            </td>
+          </tr>
+          {{end}}
+          
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ADD USER FORM -->
+    <section class="form-container">
+      <h2 style="margin-bottom: 1.5rem;">Add New User</h2>
+      <form method="post" action="/">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="Name" placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="Email" placeholder="email@example.com">
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="Password" placeholder="••••••••">
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select name="Role">
+            {{ range .Roles}}
+              <option value="{{.}}">{{.}}</option>
+            {{end}}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select name="Status">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-submit" type="submit">Create User</button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2026 User Management System
+  </footer>
+
+</body>
+</html>

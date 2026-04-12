@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS users(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_name TEXT NULL UNIQUE,
+    role_id INTEGER NULL,
+    email TEXT UNIQUE NULL,
+    passwords TEXT NULL,
+    active INTEGER DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS roles(
+    id INTEGER PRIMARY KEY,
+    Name_Role TEXT UNIQUE NULL
+);
+
+
