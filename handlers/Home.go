@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"log"
 	"net/http"
 	"text/template"
 
@@ -9,12 +10,12 @@ import (
 )
 
 type Data struct {
-	// Errr             string
+	Errr             string
 	LenUser          int
 	LenActiveUser    int
 	LenNotActiveUser int
 	Users            []user
-	Roles           []string
+	Roles            []string
 }
 
 type user struct {
@@ -26,12 +27,14 @@ type user struct {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	data := &Data{}
-	data.Roles = database.Slice
-	temp, err := template.ParseFiles("temp/html.html")
-	if err != nil {
+	if r.URL.Path != "/" {
+		ErrorHandler(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	}
-
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		ErrorHandler(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	}
+	data := &Data{}
+	var err error
 	name := ""
 	email := ""
 	role := ""
@@ -43,15 +46,39 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		role = r.FormValue("Role")
 		password = r.FormValue("Password")
 		status = r.FormValue("Status")
-		if name == "" || email == "" || role == "" || status == "" || password == "" {
-			// data.Errr = "Empty Value"
-		}
-		//		var boole = 1
-		//		if status == false {
-		//			boole = 0
-		//		}
-		//		database.DB.Exec("INSERT INTO users (user_name ,passwords, role_id, email , active) values (? ,? ,? ,?,?)",name ,password,,email,boole)
 
+		if name == "" || email == "" || role == "" || password == ""  || status == "" || (status != "true" || status != "false"){
+			data.Errr = "Empty Value"
+		}
+
+		active := 0
+		if status == "True" {
+			active = 1
+		}
+
+		roleID, err := database.GetIdRoles(role)
+		if err != nil {
+			ErrorHandler(w, "role not found", 400)
+			return
+		}
+
+		_, err = database.DB.Exec(
+			`INSERT INTO users (user_name, role_id, email,password, active)
+		 VALUES (?, ?, ?, ?,?)`,
+			name, roleID, email,password, active,
+		)
+		if err != nil {
+			ErrorHandler(w, "cannot insert user", 500)
+			return
+		}
+		http.Redirect(w, r, "/", 200)
+	}
+	data.Roles, err = database.GetAllRoles()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	temp, err := template.ParseFiles("temp/html.html")
+	if err != nil {
 	}
 
 	data.LenActiveUser = 0

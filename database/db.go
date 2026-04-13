@@ -10,7 +10,6 @@ import (
 
 var DB *sql.DB
 
-
 func Init() {
 	var err error
 	DB, err = sql.Open("sqlite3", "DataUsers.db")
@@ -28,16 +27,16 @@ func Init() {
 func CreatTables() {
 	contentSql, err := os.ReadFile("database/shema.sql")
 	if err != nil {
-		log.Fatalln("sir1 ....")
+		log.Fatalln("read schema error:", err)
 	}
 	_, err = DB.Exec(string(contentSql))
 	if err != nil {
-		log.Fatalln("sir2 ....")
+		log.Fatalln("exec schema error:", err)
 	}
 }
 
 func SeedRoles() {
-	Slice := []string{"admin", "user" , "moderator"}
+	Slice := []string{"admin", "user", "moderator"}
 	for _, v := range Slice {
 		_, err := DB.Exec("INSERT OR IGNORE INTO roles (Name_Role) VALUES (?)", v)
 		if err != nil {
@@ -46,20 +45,33 @@ func SeedRoles() {
 	}
 }
 
-func GetAllRoles() []string{
-	rows , err := DB.Query("SELEC Name_Role FROM roles")
+func GetAllRoles() ([]string, error) {
+	rows, err := DB.Query("SELECT Name_Role FROM roles")
 	if err != nil {
-		log.Fatalln( err.Error())
+		return []string{}, err
 	}
+	defer rows.Close()
 	var Slice []string
 	for rows.Next() {
 		var Role string
-		rows.Scan(&Role)
+		err := rows.Scan(&Role)
+		if err != nil {
+			return []string{}, err
+		}
 		Slice = append(Slice, Role)
 	}
-	return Slice
+	if err := rows.Err(); err != nil {
+		return []string{}, err
+	}
+	return Slice, nil
 }
 
-func GetIdRoles(NameRool string) int{
-	err := DB.QueryRow("SELECT Id FROM R")
+func GetIdRoles(NameRool string) (int, error) {
+	IdRole := 0
+	row := DB.QueryRow("SELECT id FROM roles WHERE Name_role = ?", NameRool)
+	err := row.Scan(&IdRole)
+	if err != nil {
+		return -1, err
+	}
+	return IdRole, nil
 }

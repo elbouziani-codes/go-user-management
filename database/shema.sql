@@ -1,15 +1,16 @@
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_name TEXT NULL UNIQUE,
-    role_id INTEGER NULL,
-    email TEXT UNIQUE NULL,
-    passwords TEXT NULL,
-    active INTEGER DEFAULT 1
+    user_name TEXT NOT NULL UNIQUE,
+    role_id INTEGER NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    passwords TEXT NOT NULL,
+    active INTEGER DEFAULT 1,
+    FOREIGN KEY (role_id) REFERENCES roles (id)
 );
 
 CREATE TABLE IF NOT EXISTS roles(
     id INTEGER PRIMARY KEY,
-    Name_Role TEXT UNIQUE NULL
+    Name_Role TEXT UNIQUE NOT NULL
 );
 
 
