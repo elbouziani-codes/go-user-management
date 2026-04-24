@@ -14,16 +14,8 @@ type Data struct {
 	LenUser          int
 	LenActiveUser    int
 	LenNotActiveUser int
-	Users            []user
+	Users            []database.User
 	Roles            []string
-}
-
-type user struct {
-	Id     int
-	Name   string
-	Role   string
-	Email  string
-	Status bool
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {

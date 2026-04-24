@@ -1,5 +1,12 @@
 package database
 
+type User struct {
+	Id     int
+	Name   string
+	Role   string
+	Email  string
+	Status bool
+}
 func Adduser(name, email, password string, active, roleID int) error {
 	_, err := DB.Exec(
 		`INSERT INTO users (user_name, role_id, email,passwords, active)
@@ -11,7 +18,7 @@ func Adduser(name, email, password string, active, roleID int) error {
 	}
 	return nil
 }
-
+func GetAllUsers(){}
 func GetIdRoles(NameRool string) (int, error) {
 	IdRole := 0
 	row := DB.QueryRow("SELECT id FROM roles WHERE Name_role = ?", NameRool)
