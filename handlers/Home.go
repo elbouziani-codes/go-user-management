@@ -47,7 +47,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		password = r.FormValue("Password")
 		status = r.FormValue("Status")
 
-		if name == "" || email == "" || role == "" || password == ""  || status == "" || (status != "true" || status != "false"){
+		if name == "" || email == "" || role == "" || password == "" || status == "" || (status != "true" || status != "false") {
 			data.Errr = "Empty Value"
 		}
 
@@ -62,11 +62,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = database.DB.Exec(
-			`INSERT INTO users (user_name, role_id, email,password, active)
-		 VALUES (?, ?, ?, ?,?)`,
-			name, roleID, email,password, active,
-		)
+		err = database.Adduser(name, email, password, active, roleID)
 		if err != nil {
 			ErrorHandler(w, "cannot insert user", 500)
 			return
