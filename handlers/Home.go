@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -56,25 +57,35 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = database.Adduser(name, email, password, active, roleID)
 		if err != nil {
+			fmt.Println("B")
 			ErrorHandler(w, "cannot insert user", 500)
 			return
 		}
 		http.Redirect(w, r, "/", 200)
 	}
+
 	data.Roles, err = database.GetAllRoles()
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	temp, err := template.ParseFiles("temp/html.html")
 	if err != nil {
 	}
+	fmt.Println("A")
 
+	data.Users, err = database.GetAllUsers()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	data.LenActiveUser = 0
 	data.LenNotActiveUser = 0
 	data.LenUser = 0
 	var b bytes.Buffer
 	err = temp.Execute(&b, data)
 	if err != nil {
+					fmt.Println("100")
+
 		ErrorHandler(w, "error in Execute", 500)
 	}
 	w.Write(b.Bytes())
